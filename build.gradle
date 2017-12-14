@@ -10,20 +10,20 @@ repositories {
 }
 
 dependencies {
-  compile 'io.netty:netty-codec-http:4.1.17.Final'
-  compile 'io.netty:netty-handler:4.1.17.Final'
-  compile 'io.netty:netty-transport-native-epoll:4.1.17.Final:linux-x86_64'
-  compile 'io.netty:netty-transport-native-kqueue:4.1.17.Final:osx-x86_64'
-  compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.58'
-  compile 'com.moandjiezana.toml:toml4j:0.7.2'
+  implementation 'io.netty:netty-codec-http:4.1.17.Final'
+  implementation 'io.netty:netty-handler:4.1.17.Final'
+  implementation 'io.netty:netty-transport-native-epoll:4.1.17.Final:linux-x86_64'
+  implementation 'io.netty:netty-transport-native-kqueue:4.1.17.Final:osx-x86_64'
+  implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.58'
+  implementation 'com.moandjiezana.toml:toml4j:0.7.2'
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.0'
   implementation 'org.mapdb:mapdb:3.0.5'
 
   testImplementation 'junit:junit:4.12'
 
   // logger
-  compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
-  compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
+  runtimeOnly group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
 }
 
 apply plugin:'application'
