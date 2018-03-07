@@ -48,6 +48,7 @@ public class Orion {
 
   private final Vertx vertx = vertx();
   private StorageEngine<EncryptedPayload> storageEngine;
+  private VertxServer httpServer;
 
   public static void main(String[] args) throws Exception {
     log.info("starting orion");
@@ -56,9 +57,13 @@ public class Orion {
   }
 
   public void stop() {
-    CompletableFuture<Boolean> resultFuture = new CompletableFuture<>();
 
-    vertx.close(
+    try {
+      httpServer.stop().get();
+
+      CompletableFuture<Boolean> resultFuture = new CompletableFuture<>();
+
+      vertx.close(
         result -> {
           if (result.succeeded()) {
             resultFuture.complete(true);
@@ -67,7 +72,6 @@ public class Orion {
           }
         });
 
-    try {
       resultFuture.get();
 
     } catch (InterruptedException | ExecutionException io) {
@@ -137,7 +141,7 @@ public class Orion {
     HttpServerOptions serverOptions = new HttpServerOptions();
     serverOptions.setPort(config.port());
 
-    VertxServer httpServer = new VertxServer(vertx, routes.getRouter(), serverOptions);
+    httpServer = new VertxServer(vertx, routes.getRouter(), serverOptions);
     httpServer.start().get();
 
     // start network discovery of other peers

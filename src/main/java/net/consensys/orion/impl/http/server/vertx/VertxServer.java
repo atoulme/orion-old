@@ -33,7 +33,7 @@ public class VertxServer {
     return resultFuture;
   }
 
-  public Future<Boolean> stop() {
+  public CompletableFuture<Boolean> stop() {
     CompletableFuture<Boolean> resultFuture = new CompletableFuture<>();
 
     httpServer.close(
