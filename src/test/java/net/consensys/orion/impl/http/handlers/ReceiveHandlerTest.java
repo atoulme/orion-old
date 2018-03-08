@@ -5,6 +5,7 @@ import static net.consensys.orion.impl.http.server.HttpContentType.BINARY;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.security.Security;
 import net.consensys.orion.api.cmd.OrionRoutes;
 import net.consensys.orion.api.enclave.Enclave;
 import net.consensys.orion.api.enclave.EncryptedPayload;
@@ -30,6 +31,11 @@ import okhttp3.Response;
 import org.junit.Test;
 
 public class ReceiveHandlerTest extends HandlerTest {
+
+  static {
+    Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+  }
+
   private KeyConfig keyConfig = new KeyConfig("ignore", Optional.empty());
   private SodiumMemoryKeyStore memoryKeyStore;
 

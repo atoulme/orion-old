@@ -2,6 +2,7 @@ package net.consensys.orion.api.cmd;
 
 import static io.vertx.core.Vertx.vertx;
 
+import java.security.Security;
 import net.consensys.orion.api.config.Config;
 import net.consensys.orion.api.config.ConfigException;
 import net.consensys.orion.api.enclave.Enclave;
@@ -40,6 +41,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Orion {
+
+  static {
+    Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+  }
 
   private static final Logger log = LogManager.getLogger();
   public static final String name = "orion";

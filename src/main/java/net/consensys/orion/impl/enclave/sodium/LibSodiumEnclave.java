@@ -23,10 +23,6 @@ import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 
 public class LibSodiumEnclave implements Enclave {
 
-  static {
-    Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-  }
-
   private final Hasher hasher = new Hasher();
   private KeyStore keyStore;
 
