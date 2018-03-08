@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import net.consensys.orion.api.cmd.OrionRoutes;
 import net.consensys.orion.api.enclave.EncryptedPayload;
 import net.consensys.orion.api.enclave.KeyConfig;
-import net.consensys.orion.api.storage.Storage;
 import net.consensys.orion.impl.enclave.sodium.LibSodiumEnclave;
 import net.consensys.orion.impl.enclave.sodium.SodiumEncryptedPayload;
 import net.consensys.orion.impl.enclave.sodium.SodiumMemoryKeyStore;
@@ -36,8 +35,6 @@ public class PushHandlerTest extends HandlerTest {
 
   @Test
   public void testPayloadIsStored() throws Exception {
-    // ref to storage
-    final Storage storage = routes.getStorage();
 
     // build & serialize our payload
     EncryptedPayload encryptedPayload = mockPayload();

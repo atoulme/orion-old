@@ -5,7 +5,6 @@ import static net.consensys.orion.impl.http.server.HttpContentType.*;
 import net.consensys.orion.api.enclave.Enclave;
 import net.consensys.orion.api.enclave.EncryptedPayload;
 import net.consensys.orion.api.network.NetworkNodes;
-import net.consensys.orion.api.storage.Storage;
 import net.consensys.orion.api.storage.StorageEngine;
 import net.consensys.orion.api.storage.StorageKeyBuilder;
 import net.consensys.orion.impl.http.handler.delete.DeleteHandler;
@@ -19,6 +18,7 @@ import net.consensys.orion.impl.storage.EncryptedPayloadStorage;
 import net.consensys.orion.impl.storage.Sha512_256StorageKeyBuilder;
 import net.consensys.orion.impl.utils.Serializer;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -26,6 +26,8 @@ import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.ResponseContentTypeHandler;
 
 public class OrionRoutes {
+
+  private OrionRoutes() {}
 
   // route paths
   public static final String UPCHECK = "/upcheck";
@@ -37,11 +39,7 @@ public class OrionRoutes {
   public static final String DELETE = "/delete";
   public static final String PUSH = "/push";
 
-  private final Storage storage;
-
-  private final Router router;
-
-  public OrionRoutes(
+  public static Router build(
       Vertx vertx,
       NetworkNodes networkNodes,
       Serializer serializer,
@@ -49,11 +47,21 @@ public class OrionRoutes {
       StorageEngine<EncryptedPayload> storageEngine) {
     // controller dependencies
     StorageKeyBuilder keyBuilder = new Sha512_256StorageKeyBuilder(enclave);
+    EncryptedPayloadStorage storage = new EncryptedPayloadStorage(storageEngine, keyBuilder);
 
-    this.storage = new EncryptedPayloadStorage(storageEngine, keyBuilder);
+    return build(vertx, networkNodes, serializer, enclave, storage);
+  }
+
+  @VisibleForTesting
+  public static Router build(
+      Vertx vertx,
+      NetworkNodes networkNodes,
+      Serializer serializer,
+      Enclave enclave,
+      EncryptedPayloadStorage storage) {
 
     // Vertx router
-    router = Router.router(vertx);
+    Router router = Router.router(vertx);
 
     // sets response content-type from Accept header
     // and handle errors
@@ -104,13 +112,7 @@ public class OrionRoutes {
         .produces(TEXT.httpHeaderValue)
         .consumes(CBOR.httpHeaderValue)
         .handler(new PushHandler(storage, serializer));
-  }
 
-  public Storage getStorage() {
-    return storage;
-  }
-
-  public Router getRouter() {
     return router;
   }
 }

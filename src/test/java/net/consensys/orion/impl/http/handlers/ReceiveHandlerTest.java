@@ -43,8 +43,6 @@ public class ReceiveHandlerTest extends HandlerTest {
 
   @Test
   public void testPayloadIsRetrieved() throws Exception {
-    // ref to storage
-    final Storage storage = routes.getStorage();
 
     // generate random byte content
     byte[] toEncrypt = new byte[342];
@@ -67,8 +65,6 @@ public class ReceiveHandlerTest extends HandlerTest {
 
   @Test
   public void testRawPayloadIsRetrieved() throws Exception {
-    // ref to storage
-    final Storage storage = routes.getStorage();
 
     // generate random byte content
     byte[] toEncrypt = new byte[342];
@@ -115,7 +111,6 @@ public class ReceiveHandlerTest extends HandlerTest {
 
   @Test
   public void testResponseWhenDecryptFails() throws Exception {
-    final Storage storage = routes.getStorage();
 
     byte[] toEncrypt = new byte[342];
     new Random().nextBytes(toEncrypt);
@@ -167,7 +162,7 @@ public class ReceiveHandlerTest extends HandlerTest {
     new Random().nextBytes(toEncrypt);
 
     // build receive request with payload
-    ReceiveRequest receiveRequest = buildReceiveRequest(routes.getStorage(), toEncrypt);
+    ReceiveRequest receiveRequest = buildReceiveRequest(storage, toEncrypt);
     Request request = buildPostRequest(OrionRoutes.RECEIVE, HttpContentType.CBOR, receiveRequest);
 
     // execute request

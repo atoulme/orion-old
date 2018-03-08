@@ -4,21 +4,26 @@ import net.consensys.orion.api.cmd.OrionRoutes;
 import net.consensys.orion.api.enclave.Enclave;
 import net.consensys.orion.api.enclave.EncryptedPayload;
 import net.consensys.orion.api.storage.StorageEngine;
+import net.consensys.orion.api.storage.StorageKeyBuilder;
 import net.consensys.orion.impl.config.MemoryConfig;
 import net.consensys.orion.impl.enclave.sodium.LibSodiumSettings;
 import net.consensys.orion.impl.enclave.sodium.SodiumEncryptedPayload;
 import net.consensys.orion.impl.helpers.CesarEnclave;
 import net.consensys.orion.impl.http.server.HttpContentType;
-import net.consensys.orion.impl.http.server.vertx.VertxServer;
 import net.consensys.orion.impl.network.MemoryNetworkNodes;
+import net.consensys.orion.impl.storage.EncryptedPayloadStorage;
+import net.consensys.orion.impl.storage.Sha512_256StorageKeyBuilder;
 import net.consensys.orion.impl.storage.file.MapDbStorage;
 import net.consensys.orion.impl.utils.Serializer;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.util.concurrent.CompletableFuture;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
+import io.vertx.ext.web.Router;
 import okhttp3.HttpUrl;
 import okhttp3.HttpUrl.Builder;
 import okhttp3.MediaType;
@@ -42,8 +47,8 @@ public abstract class HandlerTest {
 
   protected Vertx vertx;
   protected Integer httpServerPort;
-  protected VertxServer vertxServer;
-  protected OrionRoutes routes;
+  protected HttpServer vertxServer;
+  protected EncryptedPayloadStorage storage;
 
   private StorageEngine<EncryptedPayload> storageEngine;
 
@@ -72,7 +77,10 @@ public abstract class HandlerTest {
     enclave = buildEnclave();
 
     storageEngine = new MapDbStorage(SodiumEncryptedPayload.class, "routerdb", serializer);
-    routes = new OrionRoutes(vertx, networkNodes, serializer, enclave, storageEngine);
+
+    StorageKeyBuilder keyBuilder = new Sha512_256StorageKeyBuilder(enclave);
+    storage = new EncryptedPayloadStorage(storageEngine, keyBuilder);
+    Router router = OrionRoutes.build(vertx, networkNodes, serializer, enclave, storage);
 
     // create our vertx object
     vertx = Vertx.vertx();
@@ -82,13 +90,20 @@ public abstract class HandlerTest {
     httpServerOptions.setPort(httpServerPort);
 
     // deploy our server
-    vertxServer = new VertxServer(vertx, routes.getRouter(), httpServerOptions);
-    vertxServer.start().get();
+    CompletableFuture<Boolean> resultFuture = new CompletableFuture<>();
+    vertxServer =
+        vertx
+            .createHttpServer(httpServerOptions)
+            .requestHandler(router::accept)
+            .listen(
+                result -> {
+                  resultFuture.complete(result.succeeded());
+                });
+    resultFuture.get();
   }
 
   @After
   public void tearDown() throws Exception {
-    vertxServer.stop().get();
     vertx.close();
     storageEngine.close();
   }

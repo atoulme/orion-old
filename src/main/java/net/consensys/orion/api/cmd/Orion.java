@@ -14,7 +14,6 @@ import net.consensys.orion.impl.config.TomlConfigBuilder;
 import net.consensys.orion.impl.enclave.sodium.LibSodiumEnclave;
 import net.consensys.orion.impl.enclave.sodium.SodiumEncryptedPayload;
 import net.consensys.orion.impl.enclave.sodium.SodiumFileKeyStore;
-import net.consensys.orion.impl.http.server.vertx.VertxServer;
 import net.consensys.orion.impl.network.MemoryNetworkNodes;
 import net.consensys.orion.impl.network.NetworkDiscovery;
 import net.consensys.orion.impl.storage.file.MapDbStorage;
@@ -35,7 +34,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
+import io.vertx.ext.web.Router;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,6 +49,7 @@ public class Orion {
 
   private final Vertx vertx = vertx();
   private StorageEngine<EncryptedPayload> storageEngine;
+  private HttpServer httpServer;
 
   public static void main(String[] args) throws Exception {
     log.info("starting orion");
@@ -131,14 +133,25 @@ public class Orion {
 
     // create our storage engine
     storageEngine = createStorageEngine(config, storagePath);
-    OrionRoutes routes = new OrionRoutes(vertx, networkNodes, serializer, enclave, storageEngine);
+    Router router = OrionRoutes.build(vertx, networkNodes, serializer, enclave, storageEngine);
 
     // build vertx http server
     HttpServerOptions serverOptions = new HttpServerOptions();
     serverOptions.setPort(config.port());
 
-    VertxServer httpServer = new VertxServer(vertx, routes.getRouter(), serverOptions);
-    httpServer.start().get();
+    httpServer = vertx.createHttpServer(serverOptions);
+    CompletableFuture<Boolean> resultFuture = new CompletableFuture<>();
+    httpServer
+        .requestHandler(router::accept)
+        .listen(
+            result -> {
+              if (result.succeeded()) {
+                resultFuture.complete(true);
+              } else {
+                resultFuture.completeExceptionally(result.cause());
+              }
+            });
+    resultFuture.get();
 
     // start network discovery of other peers
     NetworkDiscovery discovery = new NetworkDiscovery(networkNodes, serializer);
