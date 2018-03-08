@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ReceiveResponse implements Serializable {
-  public final String payload;
+  private final String payload;
 
   @JsonCreator
   public ReceiveResponse(@JsonProperty("payload") String payload) {
@@ -29,5 +29,9 @@ public class ReceiveResponse implements Serializable {
   @Override
   public int hashCode() {
     return Objects.hash(payload);
+  }
+
+  public String payload() {
+    return payload;
   }
 }

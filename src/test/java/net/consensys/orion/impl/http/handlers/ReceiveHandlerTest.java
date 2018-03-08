@@ -61,7 +61,7 @@ public class ReceiveHandlerTest extends HandlerTest {
     ReceiveResponse receiveResponse =
         serializer.deserialize(HttpContentType.JSON, ReceiveResponse.class, resp.body().bytes());
 
-    byte[] decodedPayload = Base64.decode(receiveResponse.payload);
+    byte[] decodedPayload = Base64.decode(receiveResponse.payload());
     assertArrayEquals(toEncrypt, decodedPayload);
   }
 

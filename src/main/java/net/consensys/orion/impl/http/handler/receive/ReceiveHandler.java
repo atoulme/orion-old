@@ -46,9 +46,9 @@ public class ReceiveHandler implements Handler<RoutingContext> {
       receiveRequest =
           serializer.deserialize(JSON, ReceiveRequest.class, routingContext.getBody().getBytes());
       log.debug("got receive request {}", receiveRequest);
-      key = receiveRequest.key;
-      if (receiveRequest.to != null) {
-        to = new SodiumPublicKey(Base64.decode(receiveRequest.to));
+      key = receiveRequest.key();
+      if (receiveRequest.to().isPresent()) {
+        to = new SodiumPublicKey(Base64.decode(receiveRequest.to().get()));
       }
     } else {
       key = routingContext.request().getHeader("c11n-key");

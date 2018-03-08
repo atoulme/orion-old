@@ -3,7 +3,7 @@ package net.consensys.orion.impl.http.server;
 import java.util.Objects;
 
 public final class HttpError {
-  public final String error;
+  private final String error;
 
   public HttpError(String error) {
     this.error = error;
@@ -14,7 +14,7 @@ public final class HttpError {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || !getClass().equals(o.getClass())) {
       return false;
     }
     HttpError httpError = (HttpError) o;

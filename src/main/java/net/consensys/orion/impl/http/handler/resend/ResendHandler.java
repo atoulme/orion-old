@@ -8,7 +8,7 @@ import io.vertx.ext.web.RoutingContext;
 
 /**
  * ask to resend a single transaction or all transactions. Useful in situations where a
- * constellation node has lost it's database and wants to recover lost transactions.
+ * constellation node has lost its database and wants to recover lost transactions.
  */
 public class ResendHandler implements Handler<RoutingContext> {
   private final Enclave enclave;

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SendResponse {
-  public final String key; // b64 digest key result from encrypted payload storage operation
+  private final String key; // b64 digest key result from encrypted payload storage operation
 
   @JsonCreator
   public SendResponse(@JsonProperty("key") String key) {
@@ -28,5 +28,9 @@ public class SendResponse {
   @Override
   public int hashCode() {
     return Objects.hash(key);
+  }
+
+  public String key() {
+    return key;
   }
 }

@@ -69,7 +69,7 @@ public class OrionClient {
       // deserialize the response
       SendResponse sendResponse =
           serializer.deserialize(JSON, SendResponse.class, httpSendResponse.body().bytes());
-      return Optional.of(sendResponse.key);
+      return Optional.of(sendResponse.key());
     } catch (IOException io) {
       log.error(io.getMessage());
       return Optional.empty();
@@ -100,7 +100,7 @@ public class OrionClient {
       ReceiveResponse receiveResponse =
           serializer.deserialize(JSON, ReceiveResponse.class, httpReceiveResponse.body().bytes());
 
-      return Optional.of(Base64.decode(receiveResponse.payload));
+      return Optional.of(Base64.decode(receiveResponse.payload()));
 
     } catch (IOException io) {
       log.error(io.getMessage());

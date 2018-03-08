@@ -17,15 +17,6 @@ public enum HttpContentType {
     this.httpHeaderValue = httpHeaderValue;
   }
 
-  public static HttpContentType fromHttpHeader(String contentType) {
-    for (HttpContentType cType : HttpContentType.values()) {
-      if (cType.httpHeaderValue.equalsIgnoreCase(contentType)) {
-        return cType;
-      }
-    }
-    throw new NoSuchElementException();
-  }
-
   @Override
   public String toString() {
     return httpHeaderValue;

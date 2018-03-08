@@ -1,5 +1,6 @@
 package net.consensys.orion.impl.network;
 
+import java.util.Objects;
 import net.consensys.orion.api.config.Config;
 import net.consensys.orion.api.network.NetworkNodes;
 import net.consensys.orion.impl.enclave.sodium.SodiumPublicKey;
@@ -21,8 +22,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public class MemoryNetworkNodes implements NetworkNodes, Serializable {
 
   private final URL url;
-  private CopyOnWriteArraySet<URL> nodeURLs;
-  private ConcurrentHashMap<PublicKey, URL> nodePKs;
+  private final CopyOnWriteArraySet<URL> nodeURLs;
+  private final ConcurrentHashMap<PublicKey, URL> nodePKs;
 
   public MemoryNetworkNodes(Config config, PublicKey[] publicKeys) {
     url = config.url();
@@ -110,26 +111,17 @@ public class MemoryNetworkNodes implements NetworkNodes, Serializable {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || !getClass().equals(o.getClass())) {
       return false;
     }
 
     MemoryNetworkNodes that = (MemoryNetworkNodes) o;
 
-    if (url != null ? !url.equals(that.url) : that.url != null) {
-      return false;
-    }
-    if (nodeURLs != null ? !nodeURLs.equals(that.nodeURLs) : that.nodeURLs != null) {
-      return false;
-    }
-    return nodePKs != null ? nodePKs.equals(that.nodePKs) : that.nodePKs == null;
+    return Objects.equals(url, that.url) && Objects.equals(nodeURLs, that.nodeURLs) && Objects.equals(nodePKs, that.nodePKs);
   }
 
   @Override
   public int hashCode() {
-    int result = url != null ? url.hashCode() : 0;
-    result = 31 * result + (nodeURLs != null ? nodeURLs.hashCode() : 0);
-    result = 31 * result + (nodePKs != null ? nodePKs.hashCode() : 0);
-    return result;
+    return Objects.hash(url, nodeURLs, nodePKs);
   }
 }

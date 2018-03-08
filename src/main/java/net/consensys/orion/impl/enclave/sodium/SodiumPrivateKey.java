@@ -8,7 +8,6 @@ public class SodiumPrivateKey implements PrivateKey {
   private byte[] privateKey;
 
   public SodiumPrivateKey(byte[] privateKey) {
-
     this.privateKey = privateKey;
   }
 

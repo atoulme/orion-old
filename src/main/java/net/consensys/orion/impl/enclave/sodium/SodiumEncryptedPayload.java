@@ -113,11 +113,6 @@ public class SodiumEncryptedPayload implements EncryptedPayload, Serializable {
 
   @Override
   public int hashCode() {
-    int result = Arrays.hashCode(combinedKeyNonce);
-    result = 31 * result + sender.hashCode();
-    result = 31 * result + Arrays.hashCode(cipherText);
-    result = 31 * result + Arrays.hashCode(nonce);
-    result = 31 * result + Arrays.hashCode(combinedKeys);
-    return result;
+    return Objects.hash(combinedKeyNonce, sender.hashCode(), Arrays.hashCode(cipherText), Arrays.hashCode(nonce), Arrays.hashCode(combinedKeys));
   }
 }

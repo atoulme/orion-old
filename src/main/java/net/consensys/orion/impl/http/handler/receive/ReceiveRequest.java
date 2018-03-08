@@ -5,16 +5,17 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Optional;
 
 public class ReceiveRequest implements Serializable {
 
-  public final String key;
-  public final String to; // b64 encoded
+  private final String key;
+  private final Optional<String> to; // b64 encoded
 
   @JsonCreator
   public ReceiveRequest(@JsonProperty("key") String key, @JsonProperty("to") String to) {
     this.key = key;
-    this.to = to;
+    this.to = Optional.ofNullable(to);
   }
 
   @Override
@@ -37,5 +38,13 @@ public class ReceiveRequest implements Serializable {
   @Override
   public String toString() {
     return "ReceiveRequest{" + "key='" + key + '\'' + ", to='" + to + '\'' + '}';
+  }
+
+  public String key() {
+    return key;
+  }
+
+  public Optional<String> to() {
+    return to;
   }
 }
