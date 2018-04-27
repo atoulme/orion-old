@@ -55,6 +55,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import io.vertx.core.http.ClientAuth;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
@@ -153,7 +154,7 @@ public class Orion {
   }
 
   public Orion() {
-    this(vertx());
+    this(vertx(new VertxOptions().setPreferNativeTransport(true)));
   }
 
   public Orion(Vertx vertx) {
@@ -338,8 +339,11 @@ public class Orion {
         vertx.createHttpServer(options).requestHandler(nodeRouter::accept).exceptionHandler(log::error).listen(
             completeFutureInHandler(nodeFuture));
     CompletableFuture<Boolean> clientFuture = new CompletableFuture<>();
-    HttpServerOptions clientOptions =
-        new HttpServerOptions().setPort(config.clientPort()).setHost(config.clientNetworkInterface());
+    HttpServerOptions clientOptions = new HttpServerOptions()
+        .setPort(config.clientPort())
+        .setHost(config.clientNetworkInterface())
+        .setReusePort(true)
+        .setReuseAddress(true);
     clientHTTPServer =
         vertx.createHttpServer(clientOptions).requestHandler(clientRouter::accept).exceptionHandler(log::error).listen(
             completeFutureInHandler(clientFuture));

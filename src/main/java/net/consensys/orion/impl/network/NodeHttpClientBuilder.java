@@ -63,6 +63,13 @@ public class NodeHttpClientBuilder {
         }
       });
     }
+    options
+        .setKeepAlive(true)
+        .setTryUseCompression(true)
+        .setMaxPoolSize(100)
+        .setReuseAddress(true)
+        .setReusePort(true)
+        .setTcpKeepAlive(true);
     return vertx.createHttpClient(options);
   }
 

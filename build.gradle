@@ -187,6 +187,7 @@ dependencies {
   // vertx
   compile 'io.vertx:vertx-core:3.5.0'
   compile 'io.vertx:vertx-web:3.5.0'
+  compile 'io.netty:netty-transport-native-epoll:4.1.15.Final'
 
   // crypto
   compile 'org.bouncycastle:bcprov-jdk15on:1.59'
