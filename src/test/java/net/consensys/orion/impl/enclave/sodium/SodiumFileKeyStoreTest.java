@@ -22,9 +22,16 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Optional;
 
+import com.muquit.libsodiumjna.SodiumLibrary;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class SodiumFileKeyStoreTest {
+
+  @BeforeAll
+  static void setUp() {
+    SodiumLibrary.setLibraryPath(LibSodiumSettings.defaultLibSodiumPath());
+  }
 
   private InputStream configAsStream = this.getClass().getClassLoader().getResourceAsStream("keyStoreTest.toml");
   private TomlConfigBuilder configBuilder = new TomlConfigBuilder();
