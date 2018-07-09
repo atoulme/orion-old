@@ -7,3 +7,6 @@ publickeys = ["foobar.pub"]
 privatekeys = ["foobar.key"]
 othernodes = ["http://127.0.0.1:8080/", "http://127.0.0.1:8082/"]
 storage = "leveldb:orion3"
+tls="strict"
+tlsclienttrust="tofu"
+tlsservertrust="tofu"
